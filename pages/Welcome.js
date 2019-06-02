@@ -5,8 +5,9 @@ import {
   Button,
   AsyncStorage
 } from 'react-native'
+import styles from '../styles/welcome.style'
 
-export default class User extends Component {
+export default class Welcome extends Component {
   constructor(props) {
     super(props);
     this.state = { text: '' }
@@ -22,7 +23,7 @@ export default class User extends Component {
         />
         <Button
           color="#0091f9"
-          onPress={this.handlePressSure}
+          onPress={() => this.handlePressSure}
           title="确定"
         />
       </View>
@@ -31,7 +32,7 @@ export default class User extends Component {
   handleChangeText(text) {
     this.setState({text})
   }
-  handlePressSure() {
+  async handlePressSure() {
     try {
       await AsyncStorage.setItem('username', this.state.text);
     } catch (error) {

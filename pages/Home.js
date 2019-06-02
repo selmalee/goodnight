@@ -4,14 +4,14 @@ import {
   Text
 } from 'react-native'
 
-export default class Stats extends Component {
+export default class Home extends Component {
   constructor(props) {
     super(props);
   }
   render() {
     return (
       <View>
-        <Text>Stats</Text>
+        <Text>Goodnight {this.props.username}</Text>
       </View>
     );
   }
