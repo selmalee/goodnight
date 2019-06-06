@@ -11,7 +11,7 @@ export default class Home extends Component {
   render() {
     return (
       <View>
-        <Text>Goodnight {this.props.username}</Text>
+        <Text>Goodnight</Text>
       </View>
     );
   }
