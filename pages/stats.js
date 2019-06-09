@@ -76,6 +76,6 @@ export default class Stats extends Component {
   }
 
   navToHome() {
-    this.props.navigation.navigate('Home')
+    this.props.navigation.goBack()
   }
 }

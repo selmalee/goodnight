@@ -19,7 +19,8 @@ export default class Home extends Component {
     this.state = {
       date: getDate(now),
       time: getTime(now),
-      showYesterday: true
+      yesterday: false,
+      overZero: this.isOverZero()
     }
   }
 
@@ -31,21 +32,18 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         {/* 晚安 */}
-        <Text>{this.state.time}</Text>
+        <Text style={styles.time}>{this.state.time}</Text>
+        {this.state.overZero && <Text>熬夜会变丑哦。明天会没精神哦。</Text>}
         <Button
           title="晚安"
           onPress={() => this.goodnight()}
         />
         {/* 调整日期 */}
         <Text>记录日期：{this.state.date}</Text>
-        {this.state.showYesterday && <Button
-          title="昨天"
-          onPress={() => this.yesterday()}
+        {this.state.overZero && <Button
+          title={this.state.yesterday ? '今天' : '昨天'}
+          onPress={() => this.toggleDate()}
         />}
-        <Button
-          title="测试"
-          onPress={() => this.test()}
-        />
         {/* 导航 */}
         <TouchableOpacity style={styles.iconStats} onPress={() => this.navToStats()}>
           <Image source={iconStats} />
@@ -56,10 +54,11 @@ export default class Home extends Component {
 
   componentDidMount() {
     this.interval = setInterval(() => {
-      const now = new Date()
+      const now = this.state.yesterday ? new Date((new Date().getTime() - 24 * 60 * 60 * 1000)) : new Date()
       this.setState({
+        time: getTime(now),
         date: getDate(now),
-        time: getTime(now)
+        overZero: this.isOverZero()
       })
     }, 1000)
   }
@@ -68,12 +67,18 @@ export default class Home extends Component {
     clearInterval(this.interval)
   }
 
-  navToStats() {
-    this.props.navigation.navigate('Stats')
+  isOverZero() {
+    const now = new Date()
+    const zero = new Date(getDate(now) + ' 00:00:00').getTime()
+    return now.getTime() - zero < (4 * 60 * 60 * 1000)
   }
 
-  yesterday() {
-
+  toggleDate() {
+    const now = this.state.yesterday ? new Date((new Date().getTime() - 24 * 60 * 60 * 1000)) : new Date()
+    this.setState({
+      yesterday: !this.state.yesterday,
+      date: getDate(now)
+    })
   }
 
   async goodnight() {
@@ -92,6 +97,10 @@ export default class Home extends Component {
     AsyncStorage.setItem(getDate(t1), getTime(t1))
     AsyncStorage.setItem(getDate(t2), getTime(t2))
     AsyncStorage.setItem(getDate(t3), getTime(t3))
+  }
+
+  navToStats() {
+    this.props.navigation.navigate('Stats')
   }
 
 }
