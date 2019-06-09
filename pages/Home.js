@@ -5,7 +5,9 @@ import {
   Button, 
   AsyncStorage, 
   Image, 
-  TouchableOpacity} from 'react-native'
+  TouchableOpacity,
+  AlertIOS
+} from 'react-native'
 import { getDate, getTime } from '../utils/index'
 import iconStats from '../img/icon-stats.png'
 import styles from '../styles/home.style'
@@ -39,11 +41,11 @@ export default class Home extends Component {
           onPress={() => this.goodnight()}
         />
         {/* 调整日期 */}
-        <Text>记录日期：{this.state.date}</Text>
+        {/* <Text>记录日期：{this.state.date}</Text>
         {this.state.overZero && <Button
           title={this.state.yesterday ? '今天' : '昨天'}
           onPress={() => this.toggleDate()}
-        />}
+        />} */}
         {/* 导航 */}
         <TouchableOpacity style={styles.iconStats} onPress={() => this.navToStats()}>
           <Image source={iconStats} />
@@ -57,8 +59,7 @@ export default class Home extends Component {
       const now = this.state.yesterday ? new Date((new Date().getTime() - 24 * 60 * 60 * 1000)) : new Date()
       this.setState({
         time: getTime(now),
-        date: getDate(now),
-        overZero: this.isOverZero()
+        date: getDate(now)
       })
     }, 1000)
   }
@@ -73,8 +74,16 @@ export default class Home extends Component {
     return now.getTime() - zero < (4 * 60 * 60 * 1000)
   }
 
+  isAbnormal() {
+    return false
+  }
+
+  getYesterday() {
+    return new Date((new Date().getTime() - 24 * 60 * 60 * 1000))
+  }
+
   toggleDate() {
-    const now = this.state.yesterday ? new Date((new Date().getTime() - 24 * 60 * 60 * 1000)) : new Date()
+    const now = this.state.yesterday ? this.getYesterday() : new Date()
     this.setState({
       yesterday: !this.state.yesterday,
       date: getDate(now)
@@ -82,12 +91,53 @@ export default class Home extends Component {
   }
 
   async goodnight() {
-    const now = new Date()
-    const nowDate = getDate(now)
-    this.setState({
-      date: nowDate
-    })
-    await AsyncStorage.setItem(nowDate, getTime(now))
+    if(this.isOverZero()) {
+      AlertIOS.alert(
+        "选择日期",
+        "已过24点，请确定记录日期是今日还是昨日？",
+        [
+          {
+            text: "今日",
+            onPress: () => {
+              this.record(new Date())
+            },
+            style: "cancel"
+          },
+          {
+            text: "昨日",
+            onPress: () => {
+              this.record(this.getYesterday())
+            }
+          }
+        ]
+      )
+    } else if (this.isAbnormal()) {
+      if(this.isOverZero()) {
+        AlertIOS.alert(
+          "请确认",
+          "非正常睡觉时间。确定打卡？",
+          [
+            {
+              text: "取消",
+              onPress: () => {},
+              style: "cancel"
+            },
+            {
+              text: "确定",
+              onPress: () => {
+                this.record(new Date())
+              }
+            }
+          ]
+        )
+      }
+    } else {
+      this.record(new Date())
+    }
+  }
+
+  record(date) {
+    AsyncStorage.setItem(getDate(date), getTime(date))
   }
 
   test() {
