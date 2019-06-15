@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   list: {
-    height: '80%'
+    height: '70%'
   },
   listItemDate: {
     fontSize: 18
@@ -27,6 +27,11 @@ const styles = StyleSheet.create({
   listItemButton: {
     fontSize: 18,
     color: 'red',
+  },
+  new: {
+    marginTop: 10,
+    flex: 1,
+    height: 50
   },
   footer: {
     flex: 1,
@@ -46,8 +51,10 @@ const styles = StyleSheet.create({
   },
   iconHome: {
     position:'absolute',
-    bottom: 10,
-    left: 10
+    bottom: 20,
+    left: 10,
+    width: 40,
+    height: 40
   }
 });
 

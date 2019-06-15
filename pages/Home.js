@@ -17,6 +17,7 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     const now = new Date()
+    console.log(this.isOverZero())
     this.state = {
       date: getDate(now),
       time: getTime(now),
@@ -43,10 +44,8 @@ export default class Home extends Component {
           <Text style={styles.button}>test</Text>
         </TouchableOpacity>
         {/* 导航 */}
-        <TouchableOpacity
-          style={styles.iconStats}
-          onPress={() => this.navToStats()}>
-          <Image source={iconStats} />
+        <TouchableOpacity style={styles.nav} onPress={() => this.navToStats()}>
+          <Image style={styles.navIcon} source={iconStats} />
         </TouchableOpacity>
       </View>
     );
@@ -58,7 +57,7 @@ export default class Home extends Component {
       this.setState({
         time: getTime(now),
         date: getDate(now),
-        isOverZero: this.isOverZero()
+        overZero: this.isOverZero()
       })
     }, 1000)
   }
@@ -70,15 +69,15 @@ export default class Home extends Component {
   // 判断熬夜（凌晨-凌晨4点前）
   isOverZero() {
     const now = new Date()
-    const zero = new Date(getDate(now) + ' 00:00:00').getTime()
-    return now.getTime() - zero < (4 * 60 * 60 * 1000)
+    const zero = new Date(getDate(now)).getTime()
+    return (now.getTime() - zero) < (4 * 60 * 60 * 1000)
   }
 
   // 判断非正常打卡时间（4点-18点）
   isAbnormal() {
     const now = new Date()
-    const zero = new Date(getDate(now) + ' 00:00:00').getTime()
-    return now.getTime() - zero > (4 * 60 * 60 * 1000) && now.getTime() - zero < (18 * 60 * 60 * 1000)
+    const zero = new Date(getDate(now)).getTime()
+    return (now.getTime() - zero) > (4 * 60 * 60 * 1000) && (now.getTime() - zero) < (18 * 60 * 60 * 1000)
   }
 
   // 昨天
@@ -90,7 +89,7 @@ export default class Home extends Component {
   async recordHandler() {
     const yesterday = this.getYesterday()
     const now = new Date()
-    if(this.state.isOverZero) {
+    if(this.state.overZero) {
       AlertIOS.alert(
         "选择日期",
         "已到凌晨，请确定记录日期是？",
@@ -139,10 +138,11 @@ export default class Home extends Component {
 
   async test() {
     for (let i = 0; i < 9; i++) {
-      const t1 = new Date(`2019-06-0${i + 1} 23:00:00`)
-      const t2 = new Date(`2019-05-0${i + 1} 23:00:00`)
-      await AsyncStorage.setItem(getDate(t1), getTime(t1))
-      await AsyncStorage.setItem(getDate(t2), getTime(t2))
+      const t1 = new Date(`2019-06-0${i + 1}`)
+      const t2 = new Date(`2019-05-0${i + 1}`)
+      console.log(t1, t2)
+      AsyncStorage.setItem(getDate(t1), getTime(t1))
+      AsyncStorage.setItem(getDate(t2), getTime(t2))
     }
   }
   // 导航到数据

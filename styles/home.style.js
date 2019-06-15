@@ -14,11 +14,6 @@ const styles = StyleSheet.create({
     marginTop: '30%',
     fontSize: 40
   },
-  iconStats: {
-    position:'absolute',
-    bottom: 10,
-    right: 10
-  },
   button: {
     marginTop: 20,
     padding: 10,
@@ -26,6 +21,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     borderWidth: 2,
     borderColor: '#000'
+  },
+  nav: {
+    position:'absolute',
+    bottom: 20,
+    right: 10
+  },
+  navIcon: {
+    width: 40,
+    height: 40
   }
 });
 

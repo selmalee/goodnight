@@ -3,7 +3,7 @@ import {
   View, 
   Text, 
   Image,
-  Button,
+  TextInput,
   AsyncStorage,
   FlatList,
   TouchableOpacity } from 'react-native'
@@ -14,7 +14,9 @@ export default class Stats extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      list: []
+      list: [],
+      showNew: false,
+      newDate: ''
     }
     this.getData()
   }
@@ -26,6 +28,7 @@ export default class Stats extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {/* 滚动列表 */}
         <FlatList
           style={styles.list}
           data={this.state.list}
@@ -39,7 +42,26 @@ export default class Stats extends Component {
               </TouchableOpacity>
             </View>
           )}
-        />
+        ></FlatList>
+        {/* 新增输入框 */}
+        {this.state.showNew && <View style={[styles.listItem, styles.new]}>
+          <TextInput
+            style={styles.listItemDate}
+            placeholder="YYYY-mm-dd"
+            onChangeText={() => this.handleChangeText()}
+            value={this.state.newDate}
+          />
+          <TextInput
+            style={styles.listItemTime}
+            placeholder="YYYY-mm-dd"
+            onChangeText={() => this.handleChangeText()}
+            value={this.state.newDate}
+          />
+          <TouchableOpacity onPress={() => this.delete(item[0])}>
+            <Text style={styles.listItemButton}>OK</Text>
+          </TouchableOpacity>
+        </View>}
+        {/* 底部按钮 */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.footerButton} onPress={() => this.add()}>
             <Text style={styles.footerButtonText}>增加</Text>
@@ -49,8 +71,8 @@ export default class Stats extends Component {
           </TouchableOpacity>
         </View>
         {/* 导航 */}
-        <TouchableOpacity style={styles.iconHome} onPress={() => this.navToHome()}>
-          <Image source={iconHome} />
+        <TouchableOpacity onPress={() => this.navToHome()}>
+          <Image style={styles.iconHome} source={iconHome} />
         </TouchableOpacity>
       </View>
     );
@@ -77,8 +99,15 @@ export default class Stats extends Component {
   }
 
   add() {
+    this.setState({
+      showNew: true
+    })
     AsyncStorage.setItem('aaa', 'xxx')
     this.getData()
+  }
+
+  handleChangeText() {
+
   }
 
   clearAll() {
