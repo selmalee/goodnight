@@ -18,6 +18,14 @@ const styles = StyleSheet.create({
     position:'absolute',
     bottom: 10,
     right: 10
+  },
+  button: {
+    marginTop: 20,
+    padding: 10,
+    textAlign: 'center',
+    fontSize: 20,
+    borderWidth: 2,
+    borderColor: '#000'
   }
 });
 
