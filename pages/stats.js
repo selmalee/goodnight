@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import {
   View, 
-  Text, 
-  Image,
+  Text,
   TextInput,
   AsyncStorage,
   FlatList,
@@ -70,10 +69,6 @@ export default class Stats extends Component {
             <Text style={styles.footerButtonText}>清空</Text>
           </TouchableOpacity>
         </View>
-        {/* 导航 */}
-        <TouchableOpacity onPress={() => this.navToHome()}>
-          <Image style={styles.iconHome} source={iconHome} />
-        </TouchableOpacity>
       </View>
     );
   }
@@ -118,9 +113,5 @@ export default class Stats extends Component {
   async delete(key) {
     await AsyncStorage.removeItem(key)
     this.getData()
-  }
-
-  navToHome() {
-    this.props.navigation.goBack()
   }
 }

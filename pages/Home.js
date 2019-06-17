@@ -2,13 +2,11 @@ import React, { Component } from 'react'
 import { 
   View,
   Text,
-  AsyncStorage, 
-  Image, 
+  AsyncStorage,
   TouchableOpacity,
   AlertIOS
 } from 'react-native'
 import { getDate, getTime } from '../utils/index'
-import iconStats from '../img/icon-stats.png'
 import styles from '../styles/home.style'
 
 export default class Home extends Component {
@@ -42,10 +40,6 @@ export default class Home extends Component {
         <TouchableOpacity
           onPress={() => this.test()}>
           <Text style={styles.button}>test</Text>
-        </TouchableOpacity>
-        {/* 导航 */}
-        <TouchableOpacity style={styles.nav} onPress={() => this.navToStats()}>
-          <Image style={styles.navIcon} source={iconStats} />
         </TouchableOpacity>
       </View>
     );
@@ -144,10 +138,6 @@ export default class Home extends Component {
       AsyncStorage.setItem(getDate(t1), getTime(t1))
       AsyncStorage.setItem(getDate(t2), getTime(t2))
     }
-  }
-  // 导航到数据
-  navToStats() {
-    this.props.navigation.navigate('Stats')
   }
 
 }
