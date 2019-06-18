@@ -5,6 +5,10 @@ import {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff'
+  },
+  tabBarIcon: {
+    width: 26,
+    height: 26
   }
 });
 

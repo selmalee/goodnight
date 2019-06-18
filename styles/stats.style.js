@@ -48,13 +48,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     borderWidth: 2,
     borderColor: '#000'
-  },
-  iconHome: {
-    position:'absolute',
-    bottom: 20,
-    left: 10,
-    width: 40,
-    height: 40
   }
 });
 

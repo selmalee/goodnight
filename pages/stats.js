@@ -7,7 +7,6 @@ import {
   FlatList,
   TouchableOpacity } from 'react-native'
 import styles from '../styles/stats.style'
-import iconHome from '../img/icon-home.png'
 
 export default class Stats extends Component {
   constructor(props) {

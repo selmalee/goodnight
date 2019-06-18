@@ -21,15 +21,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     borderWidth: 2,
     borderColor: '#000'
-  },
-  nav: {
-    position:'absolute',
-    bottom: 20,
-    right: 10
-  },
-  navIcon: {
-    width: 40,
-    height: 40
   }
 });
 
