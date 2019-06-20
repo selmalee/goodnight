@@ -15,7 +15,6 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     const now = new Date()
-    console.log(this.isOverZero())
     this.state = {
       date: getDate(now),
       time: getTime(now),

@@ -13,10 +13,12 @@ const styles = StyleSheet.create({
     height: '70%'
   },
   listItemDate: {
-    fontSize: 18
+    width: 100,
+    fontSize: 18,
   },
   listItemTime: {
-    fontSize: 18
+    width: 100,
+    fontSize: 18,
   },
   listItem: {
     flex: 1,
@@ -26,7 +28,15 @@ const styles = StyleSheet.create({
   },
   listItemButton: {
     fontSize: 18,
+  },
+  colorError: {
     color: 'red',
+  },
+  colorInfo: {
+    color: 'blue',
+  },
+  colorSuccess: {
+    color: 'green',
   },
   new: {
     marginTop: 10,

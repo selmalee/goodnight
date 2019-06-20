@@ -42,6 +42,7 @@ const RootTabs = TabNavigator(
     tabBarOptions: {
       activeTintColor: 'black',
       inactiveTintColor: 'grey',
+      resetOnBlur: true
     }
   }
 )

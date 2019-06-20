@@ -14,13 +14,24 @@ export default class Stats extends Component {
     this.state = {
       list: [],
       showNew: false,
-      newDate: ''
+      newDate: '',
+      showEdit: false,
+      editDate: '',
+      editTime: ''
     }
-    this.getData()
   }
 
   static navigationOptions = {
     title: '数据'
+  }
+
+  componentDidMount() {
+    console.log('mount')
+    this.getData()
+  }
+
+  componentWillUnmount() {
+    console.log('unmount')
   }
 
   render() {
@@ -31,15 +42,44 @@ export default class Stats extends Component {
           style={styles.list}
           data={this.state.list}
           keyExtractor={(item) => item[0]}
-          renderItem={({item}) => (
-            <View style={styles.listItem} key={item[0]}>
-              <Text style={styles.listItemDate}>{item[0]}</Text>
-              <Text style={styles.listItemTime}>{item[1]}</Text>
-              <TouchableOpacity onPress={() => this.delete(item[0])}>
-                <Text style={styles.listItemButton}>删除</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          renderItem={({item}) => {
+            if (item[0] === this.state.showEdit) {
+              return (
+                <View style={styles.listItem} key={item[0]}>
+                  {/* 编辑输入框 */}
+                  <TextInput
+                    style={styles.listItemDate}
+                    placeholder="YYYY-mm-dd"
+                    onChangeText={(text) => this.setState({ editDate: text })}
+                    value={this.state.editDate}
+                  />
+                  <TextInput
+                    style={styles.listItemTime}
+                    placeholder="hh:mm:ss"
+                    onChangeText={(text) => this.setState({ editTime: text })}
+                    value={this.state.editTime}
+                  />
+                  <TouchableOpacity onPress={() => this.handleEditSubmit()}>
+                    <Text style={[styles.listItemButton, styles.colorSuccess]}>OK</Text>
+                  </TouchableOpacity>
+                </View>
+              )
+            } else {
+              return (
+                <View style={styles.listItem} key={item[0]}>
+                  {/* 列表项 */}
+                  <Text style={styles.listItemDate}>{item[0]}</Text>
+                  <Text style={styles.listItemTime}>{item[1]}</Text>
+                  <TouchableOpacity onPress={() => this.edit(item[0], item[1])}>
+                    <Text style={[styles.listItemButton, styles.colorInfo]}>编辑</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.delete(item[0])}>
+                    <Text style={[styles.listItemButton, styles.colorError]}>删除</Text>
+                  </TouchableOpacity>
+                </View>
+              )
+            }
+          }}
         ></FlatList>
         {/* 新增输入框 */}
         {this.state.showNew && <View style={[styles.listItem, styles.new]}>
@@ -91,7 +131,7 @@ export default class Stats extends Component {
       }
     })
   }
-
+  // 新增
   add() {
     this.setState({
       showNew: true
@@ -99,18 +139,45 @@ export default class Stats extends Component {
     AsyncStorage.setItem('aaa', 'xxx')
     this.getData()
   }
+  // 编辑
+  edit(key, value) {
+    this.setState({
+      editDate: key,
+      editTime: value,
+      showEdit: key
+    })
+    this.getData()
+  }
+  handleEditDate(text) {
+    this.setState({
+      editDate: text
+    })
+  }
+  handleEditTime(text) {
+    this.setState({
+      editTime: text
+    })
+  }
+  async handleEditSubmit() {
+    await AsyncStorage.removeItem(this.state.showEdit)
+    AsyncStorage.setItem(this.state.editDate, this.state.editTime)
+    this.setState({
+      showEdit: false
+    })
+    this.getData()
+  }
+  // 删除
+  async delete(key) {
+    await AsyncStorage.removeItem(key)
+    this.getData()
+  }
 
   handleChangeText() {
 
   }
-
+  // 清空
   clearAll() {
     AsyncStorage.clear()
-    this.getData()
-  }
-
-  async delete(key) {
-    await AsyncStorage.removeItem(key)
     this.getData()
   }
 }
