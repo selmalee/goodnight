@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View, 
   Text,
@@ -6,6 +6,8 @@ import {
   AsyncStorage,
   FlatList,
   TouchableOpacity } from 'react-native'
+import DatePicker from 'react-native-datepicker'
+import { getDate } from '../utils/index'
 import styles from '../styles/stats.style'
 
 export default class Stats extends Component {
@@ -13,12 +15,12 @@ export default class Stats extends Component {
     super(props);
     this.state = {
       list: [],
-      showNew: false,
-      newDate: '',
       showEdit: false,
       editDate: '',
-      editTime: ''
+      editTime: '',
+      loading: false
     }
+    this.listRef = undefined
   }
 
   static navigationOptions = {
@@ -41,26 +43,48 @@ export default class Stats extends Component {
         <FlatList
           style={styles.list}
           data={this.state.list}
+          ref={(list) => { this.listRef = list}}
           keyExtractor={(item) => item[0]}
+          refreshing={this.state.loading}
+          onRefresh={() => this.getData()}
+          extraData={this.state}
+          getItemLayout={(data, index) => (
+            {length: 48, offset: 48 * index, index}
+          )}
           renderItem={({item}) => {
             if (item[0] === this.state.showEdit) {
               return (
                 <View style={styles.listItem} key={item[0]}>
                   {/* 编辑输入框 */}
-                  <TextInput
-                    style={styles.listItemDate}
-                    placeholder="YYYY-mm-dd"
-                    onChangeText={(text) => this.setState({ editDate: text })}
-                    value={this.state.editDate}
+                  <DatePicker
+                    date={this.state.editDate}
+                    style={styles.listItemPicker}
+                    mode="date"
+                    placeholder="选择日期"
+                    format="YYYY-MM-DD"
+                    maxDate={getDate(new Date())}
+                    confirmBtnText="确定"
+                    cancelBtnText="取消"
+                    showIcon={false}
+                    // customStyles={pickerStyle}
+                    onDateChange={(text) => {this.setState({editDate: text})}}
                   />
-                  <TextInput
-                    style={styles.listItemTime}
-                    placeholder="hh:mm:ss"
-                    onChangeText={(text) => this.setState({ editTime: text })}
-                    value={this.state.editTime}
+                  <DatePicker
+                    date={this.state.editTime}
+                    style={styles.listItemPicker}
+                    mode="time"
+                    placeholder="选择时间"
+                    confirmBtnText="确定"
+                    cancelBtnText="取消"
+                    showIcon={false}
+                    // customStyles={pickerStyle}
+                    onDateChange={(text) => this.handleEditTime(text)}
                   />
                   <TouchableOpacity onPress={() => this.handleEditSubmit()}>
-                    <Text style={[styles.listItemButton, styles.colorSuccess]}>OK</Text>
+                    <Text style={[styles.listItemButton, styles.colorSuccess]}>确定</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.handleEditCancel()}>
+                    <Text style={[styles.listItemButton, styles.colorError]}>取消</Text>
                   </TouchableOpacity>
                 </View>
               )
@@ -68,8 +92,8 @@ export default class Stats extends Component {
               return (
                 <View style={styles.listItem} key={item[0]}>
                   {/* 列表项 */}
-                  <Text style={styles.listItemDate}>{item[0]}</Text>
-                  <Text style={styles.listItemTime}>{item[1]}</Text>
+                  <Text style={styles.listItemText}>{item[0]}</Text>
+                  <Text style={styles.listItemText}>{item[1]}</Text>
                   <TouchableOpacity onPress={() => this.edit(item[0], item[1])}>
                     <Text style={[styles.listItemButton, styles.colorInfo]}>编辑</Text>
                   </TouchableOpacity>
@@ -82,23 +106,6 @@ export default class Stats extends Component {
           }}
         ></FlatList>
         {/* 新增输入框 */}
-        {this.state.showNew && <View style={[styles.listItem, styles.new]}>
-          <TextInput
-            style={styles.listItemDate}
-            placeholder="YYYY-mm-dd"
-            onChangeText={() => this.handleChangeText()}
-            value={this.state.newDate}
-          />
-          <TextInput
-            style={styles.listItemTime}
-            placeholder="YYYY-mm-dd"
-            onChangeText={() => this.handleChangeText()}
-            value={this.state.newDate}
-          />
-          <TouchableOpacity onPress={() => this.delete(item[0])}>
-            <Text style={styles.listItemButton}>OK</Text>
-          </TouchableOpacity>
-        </View>}
         {/* 底部按钮 */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.footerButton} onPress={() => this.add()}>
@@ -113,11 +120,15 @@ export default class Stats extends Component {
   }
 
   async getData() {
+    this.setState({
+      loading: true
+    })
     const keys = await AsyncStorage.getAllKeys()
     let list = await AsyncStorage.multiGet(keys)
     this.sort(list)
     this.setState({
-      list
+      list,
+      loading: false
     })
   }
 
@@ -132,12 +143,13 @@ export default class Stats extends Component {
     })
   }
   // 新增
-  add() {
+  async add() {
     this.setState({
-      showNew: true
+      showEdit: 'YYYY-MM-DD',
+      list: [...this.state.list, ['YYYY-MM-DD', '']]
+    }, () => {
+      this.listRef.scrollToEnd()
     })
-    AsyncStorage.setItem('aaa', 'xxx')
-    this.getData()
   }
   // 编辑
   edit(key, value) {
@@ -146,7 +158,6 @@ export default class Stats extends Component {
       editTime: value,
       showEdit: key
     })
-    this.getData()
   }
   handleEditDate(text) {
     this.setState({
@@ -154,26 +165,36 @@ export default class Stats extends Component {
     })
   }
   handleEditTime(text) {
+    console.log(text)
     this.setState({
       editTime: text
     })
   }
+  // 提交编辑
   async handleEditSubmit() {
     await AsyncStorage.removeItem(this.state.showEdit)
     AsyncStorage.setItem(this.state.editDate, this.state.editTime)
     this.setState({
+      showEdit: false,
+      editDate: '',
+      editTime: ''
+    })
+    this.getData()
+  }
+  // 取消编辑
+  handleEditCancel() {
+    this.setState({
       showEdit: false
     })
+    if (AsyncStorage.getItem('YYYY-MM-DD')) {
+      AsyncStorage.removeItem('YYYY-MM-DD')
+    }
     this.getData()
   }
   // 删除
   async delete(key) {
     await AsyncStorage.removeItem(key)
     this.getData()
-  }
-
-  handleChangeText() {
-
   }
   // 清空
   clearAll() {

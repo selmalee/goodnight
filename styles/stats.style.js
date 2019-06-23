@@ -10,25 +10,35 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   list: {
-    height: '70%'
-  },
-  listItemDate: {
-    width: 100,
-    fontSize: 18,
-  },
-  listItemTime: {
-    width: 100,
-    fontSize: 18,
+    height: '75%',
+    paddingBottom: 10
   },
   listItem: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 18,
     margin: 10
+  },
+  listItemText: {
+    fontSize: 18,
   },
   listItemButton: {
     fontSize: 18,
+    flex: 1
   },
+  // listItemTime: {
+  //   fontSize: 18,
+  // },
+  listItemPicker: {
+    // flex: 1,
+    width: 100,
+    height: 18
+  },
+  // listItemButton: {
+  //   fontSize: 18,
+  // },
   colorError: {
     color: 'red',
   },

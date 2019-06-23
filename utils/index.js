@@ -12,6 +12,7 @@ export const getDate = (date) => {
 export const getTime = (date) => {
   const h = date.getHours()
   const m = date.getMinutes()
-  const s = date.getSeconds()
-  return `${formatNum(h)}:${formatNum(m)}:${formatNum(s)}`
+  // const s = date.getSeconds()
+  // return `${formatNum(h)}:${formatNum(m)}:${formatNum(s)}`
+  return `${formatNum(h)}:${formatNum(m)}`
 }

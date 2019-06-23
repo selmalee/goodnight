@@ -62,14 +62,14 @@ export default class Home extends Component {
   // 判断熬夜（凌晨-凌晨4点前）
   isOverZero() {
     const now = new Date()
-    const zero = new Date(getDate(now)).getTime()
+    const zero = new Date().setHours(0, 0, 0, 0)
     return (now.getTime() - zero) < (4 * 60 * 60 * 1000)
   }
 
   // 判断非正常打卡时间（4点-18点）
   isAbnormal() {
     const now = new Date()
-    const zero = new Date(getDate(now)).getTime()
+    const zero = new Date().setHours(0, 0, 0, 0)
     return (now.getTime() - zero) > (4 * 60 * 60 * 1000) && (now.getTime() - zero) < (18 * 60 * 60 * 1000)
   }
 
@@ -80,6 +80,7 @@ export default class Home extends Component {
 
   // 记录处理
   async recordHandler() {
+    this.isAbnormal()
     const yesterday = this.getYesterday()
     const now = new Date()
     if(this.state.overZero) {
