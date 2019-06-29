@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Stats from './Stats';
-import New from './New';
 import Home from './Home';
 import { Image } from 'react-native'
 import { TabNavigator, StackNavigator } from 'react-navigation'
@@ -11,8 +10,7 @@ import styles from '../styles/app.style'
 // a route configuration object（一个路由配置对象）
 // an options object（一个可选对象）
 const StatsStack = StackNavigator({
-  Stats: { screen: Stats },
-  New: { screen: New }
+  Stats: { screen: Stats }
 })
 const RootTabs = TabNavigator(
   {
@@ -31,7 +29,12 @@ const RootTabs = TabNavigator(
         tabBarLabel: '数据',
         tabBarIcon: () => (
           <Image style={styles.tabBarIcon} source={iconStats} />
-        )
+        ),
+        tabBarOnPress: ({scene, jumpToIndex}) => {
+          // console.log(scene)
+          jumpToIndex(scene.index)
+          // this.props.navigation.navigate('Stats')
+        }
       }
     }
   },

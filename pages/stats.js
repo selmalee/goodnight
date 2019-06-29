@@ -2,29 +2,32 @@ import React, { Component } from 'react'
 import {
   View, 
   Text,
-  TextInput,
   AsyncStorage,
   FlatList,
   TouchableOpacity } from 'react-native'
-import DatePicker from 'react-native-datepicker'
-import { getDate } from '../utils/index'
+import Edit from './Edit'
 import styles from '../styles/stats.style'
+import Dimensions from 'Dimensions'
 
 export default class Stats extends Component {
+  listItemHeight = 48
+
   constructor(props) {
     super(props);
     this.state = {
       list: [],
       showEdit: false,
-      editDate: '',
-      editTime: '',
       loading: false
     }
     this.listRef = undefined
-  }
-
-  static navigationOptions = {
-    title: '数据'
+    this.props.navigation.addListener('didFocus', (payload) => {
+      console.log('didFocus')
+      this.getData()
+    })
+    this.props.navigation.addListener('didBlur', (payload) => {
+      console.log('didBlur')
+      this.syncData()
+    })
   }
 
   componentDidMount() {
@@ -34,6 +37,7 @@ export default class Stats extends Component {
 
   componentWillUnmount() {
     console.log('unmount')
+    this.syncData()
   }
 
   render() {
@@ -46,47 +50,17 @@ export default class Stats extends Component {
           ref={(list) => { this.listRef = list}}
           keyExtractor={(item) => item[0]}
           refreshing={this.state.loading}
-          onRefresh={() => this.getData()}
           extraData={this.state}
           getItemLayout={(data, index) => (
-            {length: 48, offset: 48 * index, index}
+            {length: this.listItemHeight, offset: this.listItemHeight * index, index}
           )}
           renderItem={({item}) => {
             if (item[0] === this.state.showEdit) {
               return (
-                <View style={styles.listItem} key={item[0]}>
-                  {/* 编辑输入框 */}
-                  <DatePicker
-                    date={this.state.editDate}
-                    style={styles.listItemPicker}
-                    mode="date"
-                    placeholder="选择日期"
-                    format="YYYY-MM-DD"
-                    maxDate={getDate(new Date())}
-                    confirmBtnText="确定"
-                    cancelBtnText="取消"
-                    showIcon={false}
-                    // customStyles={pickerStyle}
-                    onDateChange={(text) => {this.setState({editDate: text})}}
-                  />
-                  <DatePicker
-                    date={this.state.editTime}
-                    style={styles.listItemPicker}
-                    mode="time"
-                    placeholder="选择时间"
-                    confirmBtnText="确定"
-                    cancelBtnText="取消"
-                    showIcon={false}
-                    // customStyles={pickerStyle}
-                    onDateChange={(text) => this.handleEditTime(text)}
-                  />
-                  <TouchableOpacity onPress={() => this.handleEditSubmit()}>
-                    <Text style={[styles.listItemButton, styles.colorSuccess]}>确定</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => this.handleEditCancel()}>
-                    <Text style={[styles.listItemButton, styles.colorError]}>取消</Text>
-                  </TouchableOpacity>
-                </View>
+                <Edit
+                item={item}
+                submit={(date, time) => this.editSubmitHanlder(date, time)}
+                cancel={() => this.editCancelHandler()} />
               )
             } else {
               return (
@@ -94,7 +68,7 @@ export default class Stats extends Component {
                   {/* 列表项 */}
                   <Text style={styles.listItemText}>{item[0]}</Text>
                   <Text style={styles.listItemText}>{item[1]}</Text>
-                  <TouchableOpacity onPress={() => this.edit(item[0], item[1])}>
+                  <TouchableOpacity onPress={() => this.edit(item[0])}>
                     <Text style={[styles.listItemButton, styles.colorInfo]}>编辑</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => this.delete(item[0])}>
@@ -118,7 +92,7 @@ export default class Stats extends Component {
       </View>
     );
   }
-
+  // 获取storage的数据
   async getData() {
     this.setState({
       loading: true
@@ -131,6 +105,11 @@ export default class Stats extends Component {
       loading: false
     })
   }
+  // 同步数据到storage
+  async syncData() {
+    await AsyncStorage.clear()
+    AsyncStorage.multiSet(this.state.list)
+  }
 
   // 按日期排序
   sort(list) {
@@ -141,6 +120,7 @@ export default class Stats extends Component {
         return -1
       }
     })
+    return list
   }
   // 新增
   async add() {
@@ -148,57 +128,45 @@ export default class Stats extends Component {
       showEdit: 'YYYY-MM-DD',
       list: [...this.state.list, ['YYYY-MM-DD', '']]
     }, () => {
+      console.log(this.state.list.length * this.listItemHeight)
+      console.log(Dimensions.get('window').height)
       this.listRef.scrollToEnd()
     })
   }
   // 编辑
-  edit(key, value) {
+  edit(key) {
     this.setState({
-      editDate: key,
-      editTime: value,
       showEdit: key
     })
   }
-  handleEditDate(text) {
-    this.setState({
-      editDate: text
-    })
-  }
-  handleEditTime(text) {
-    console.log(text)
-    this.setState({
-      editTime: text
-    })
-  }
   // 提交编辑
-  async handleEditSubmit() {
-    await AsyncStorage.removeItem(this.state.showEdit)
-    AsyncStorage.setItem(this.state.editDate, this.state.editTime)
+  async editSubmitHanlder(date, time) {
+    // 覆盖该天数据（如果相同）、去掉编辑前数据 -> 新增数据 -> 排序
+    const list = this.state.list
+      .filter(item => item[0] !== this.state.showEdit && item[0] !== date)
+      .concat([[date, time]])
     this.setState({
-      showEdit: false,
-      editDate: '',
-      editTime: ''
-    })
-    this.getData()
-  }
-  // 取消编辑
-  handleEditCancel() {
-    this.setState({
+      list: this.sort(list),
       showEdit: false
     })
-    if (AsyncStorage.getItem('YYYY-MM-DD')) {
-      AsyncStorage.removeItem('YYYY-MM-DD')
-    }
-    this.getData()
+  }
+  // 取消编辑
+  editCancelHandler() {
+    this.setState({
+      showEdit: false,
+      list: this.state.list.filter(item => item[0] !== 'YYYY-MM-DD')
+    })
   }
   // 删除
   async delete(key) {
-    await AsyncStorage.removeItem(key)
-    this.getData()
+    this.setState({
+      list: this.state.list.filter(item => item[0] !== key)
+    })
   }
   // 清空
   clearAll() {
-    AsyncStorage.clear()
-    this.getData()
+    this.setState({
+      list: []
+    })
   }
 }

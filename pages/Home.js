@@ -4,7 +4,7 @@ import {
   Text,
   AsyncStorage,
   TouchableOpacity,
-  AlertIOS
+  Alert
 } from 'react-native'
 import { getDate, getTime } from '../utils/index'
 import styles from '../styles/home.style'
@@ -22,10 +22,6 @@ export default class Home extends Component {
     }
   }
 
-  static navigationOptions = {
-    title: '打卡'
-  }
-
   render() {
     return (
       <View style={styles.container}>
@@ -36,10 +32,10 @@ export default class Home extends Component {
           onPress={() => this.recordHandler()}>
           <Text style={styles.button}>晚安</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => this.test()}>
           <Text style={styles.button}>test</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     );
   }
@@ -84,7 +80,7 @@ export default class Home extends Component {
     const yesterday = this.getYesterday()
     const now = new Date()
     if(this.state.overZero) {
-      AlertIOS.alert(
+      Alert.alert(
         "选择日期",
         "已到凌晨，请确定记录日期是？",
         [
@@ -104,7 +100,7 @@ export default class Home extends Component {
         ]
       )
     } else if (this.isAbnormal()) {
-      AlertIOS.alert(
+      Alert.alert(
         "请确认",
         "非正常睡觉时间。确定打卡？",
         [
@@ -126,18 +122,19 @@ export default class Home extends Component {
     }
   }
   // 打卡
-  record(date) {
-    AsyncStorage.setItem(getDate(date), getTime(date))
+  async record(date) {
+    await AsyncStorage.setItem(getDate(date), getTime(date))
+    Alert.alert("", "打卡成功！")
   }
 
-  async test() {
-    for (let i = 0; i < 9; i++) {
-      const t1 = new Date(`2019-06-0${i + 1}`)
-      const t2 = new Date(`2019-05-0${i + 1}`)
-      console.log(t1, t2)
-      AsyncStorage.setItem(getDate(t1), getTime(t1))
-      AsyncStorage.setItem(getDate(t2), getTime(t2))
-    }
-  }
+  // async test() {
+  //   for (let i = 0; i < 9; i++) {
+  //     const t1 = new Date(`2019-06-0${i + 1}`)
+  //     // const t2 = new Date(`2019-05-0${i + 1}`)
+  //     // console.log(t1, t2)
+  //     AsyncStorage.setItem(getDate(t1), getTime(t1))
+  //     // AsyncStorage.setItem(getDate(t2), getTime(t2))
+  //   }
+  // }
 
 }
