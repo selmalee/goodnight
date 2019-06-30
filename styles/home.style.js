@@ -11,16 +11,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   time: {
-    marginTop: '30%',
+    marginTop: '40%',
     fontSize: 40
   },
-  button: {
+  date: {
+    marginTop: 10,
+    fontSize: 16
+  },
+  msg: {
     marginTop: 20,
-    padding: 10,
+    fontSize: 14,
+    color: '#707070'
+  },
+  button: {
+    marginTop: '30%',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     textAlign: 'center',
     fontSize: 20,
-    borderWidth: 2,
-    borderColor: '#000'
+    color: '#fff',
+    backgroundColor: '#000'
   }
 });
 

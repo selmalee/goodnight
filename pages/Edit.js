@@ -2,11 +2,25 @@ import React, { Component } from 'react';
 import {
   View,
   TouchableOpacity,
-  Text
+  Image
 } from 'react-native'
 import styles from '../styles/stats.style'
 import DatePicker from 'react-native-datepicker'
 import { getDate } from '../utils/index'
+import iconClose from '../img/close.png'
+import iconCheck from '../img/check.png'
+
+const datePickerProps = {
+  style: styles.listItemPicker,
+  confirmBtnText: "确定",
+  cancelBtnText: "取消",
+  showIcon: false,
+  customStyles: {
+    dateInput: {
+      height: 24
+    }
+  }
+}
 
 export default class Edit extends Component {
   constructor(props) {
@@ -22,45 +36,37 @@ export default class Edit extends Component {
         {/* 编辑输入框 */}
         <DatePicker
           date={this.state.editDate}
-          style={styles.listItemPicker}
           mode="date"
-          placeholder="选择日期"
           format="YYYY-MM-DD"
           maxDate={getDate(new Date())}
-          confirmBtnText="确定"
-          cancelBtnText="取消"
-          showIcon={false}
+          placeholder="选择日期"
+          {...datePickerProps}
           onDateChange={(text) => {
             this.setState({ editDate: text })
           }}
         />
         <DatePicker
           date={this.state.editTime}
-          style={styles.listItemPicker}
           mode="time"
           placeholder="选择时间"
-          confirmBtnText="确定"
-          cancelBtnText="取消"
-          showIcon={false}
+          {...datePickerProps}
           onDateChange={(text) => {
             this.setState({ editTime: text })
           }}
         />
-        <TouchableOpacity onPress={() => this.submit()}>
-          <Text style={[styles.listItemButton, styles.colorSuccess]}>确定</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.props.cancel}>
-          <Text style={[styles.listItemButton, styles.colorError]}>取消</Text>
-        </TouchableOpacity>
+        <View style={styles.listItemActions}>
+          <TouchableOpacity onPress={() => this.submit()}>
+            <Image style={styles.listItemAction} source={iconCheck} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.props.cancel}>
+            <Image style={styles.listItemAction} source={iconClose} />
+          </TouchableOpacity>
+        </View>
       </View>
     )
   }
   // 提交编辑
-  async submit() {
+  submit() {
     this.props.submit(this.state.editDate, this.state.editTime)
-    this.setState({
-      editDate: '',
-      editTime: ''
-    })
   }
 }

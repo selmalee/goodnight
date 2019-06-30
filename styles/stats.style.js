@@ -24,21 +24,18 @@ const styles = StyleSheet.create({
   listItemText: {
     fontSize: 18,
   },
-  listItemButton: {
-    fontSize: 18,
-    flex: 1
+  listItemActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
-  // listItemTime: {
-  //   fontSize: 18,
-  // },
-  listItemPicker: {
-    // flex: 1,
-    width: 100,
+  listItemAction: {
+    marginLeft: 10,
+    width: 18,
     height: 18
   },
-  // listItemButton: {
-  //   fontSize: 18,
-  // },
+  listItemPicker: {
+    margin: 0
+  },
   colorError: {
     color: 'red',
   },
@@ -65,9 +62,10 @@ const styles = StyleSheet.create({
   footerButtonText: {
     padding: 6,
     textAlign: 'center',
-    fontSize: 18,
-    borderWidth: 2,
-    borderColor: '#000'
+    fontSize: 16,
+    color: '#2c2c2c',
+    borderWidth: 1,
+    borderColor: '#2c2c2c'
   }
 });
 

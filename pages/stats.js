@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
 import {
+  Alert,
   View, 
   Text,
   AsyncStorage,
   FlatList,
-  TouchableOpacity } from 'react-native'
+  TouchableOpacity,
+  AppState,
+  Image } from 'react-native'
 import Edit from './Edit'
 import styles from '../styles/stats.style'
+import { getDate } from '../utils/index'
 import Dimensions from 'Dimensions'
+import iconDelete from '../img/close-circle.png'
+import iconEdit from '../img/edit.png'
 
 export default class Stats extends Component {
   listItemHeight = 48
@@ -20,24 +26,36 @@ export default class Stats extends Component {
       loading: false
     }
     this.listRef = undefined
-    this.props.navigation.addListener('didFocus', (payload) => {
+    // 切换到数据页时，如果有新打卡数据，改变list后删除新打卡数据
+    this.props.navigation.addListener('didFocus', async (payload) => {
       console.log('didFocus')
-      this.getData()
-    })
-    this.props.navigation.addListener('didBlur', (payload) => {
-      console.log('didBlur')
-      this.syncData()
+      const newRecord = await AsyncStorage.getItem('newRecord')
+      if (newRecord) {
+        console.log('newRecord', newRecord)
+        await this.submitHandler(getDate(new Date()), newRecord)
+        AsyncStorage.setItem('newRecord', '')
+      }
     })
   }
-
+  // 组件mount时获取缓存数据
   componentDidMount() {
     console.log('mount')
     this.getData()
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
-
+  // 组件unmount时同步数据到缓存
   componentWillUnmount() {
     console.log('unmount')
     this.syncData()
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (nextAppState === 'inactive') {
+      // App切换到后台时同步数据到缓存
+      console.log('inactive sync')
+      this.syncData()
+    }
   }
 
   render() {
@@ -59,8 +77,8 @@ export default class Stats extends Component {
               return (
                 <Edit
                 item={item}
-                submit={(date, time) => this.editSubmitHanlder(date, time)}
-                cancel={() => this.editCancelHandler()} />
+                submit={(date, time) => this.submitHandler(date, time)}
+                cancel={() => this.cancelHandler()} />
               )
             } else {
               return (
@@ -68,12 +86,14 @@ export default class Stats extends Component {
                   {/* 列表项 */}
                   <Text style={styles.listItemText}>{item[0]}</Text>
                   <Text style={styles.listItemText}>{item[1]}</Text>
-                  <TouchableOpacity onPress={() => this.edit(item[0])}>
-                    <Text style={[styles.listItemButton, styles.colorInfo]}>编辑</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => this.delete(item[0])}>
-                    <Text style={[styles.listItemButton, styles.colorError]}>删除</Text>
-                  </TouchableOpacity>
+                  <View style={styles.listItemActions}>
+                    <TouchableOpacity onPress={() => this.edit(item[0])}>
+                      <Image style={styles.listItemAction} source={iconEdit} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.delete(item[0])}>
+                      <Image style={styles.listItemAction} source={iconDelete} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )
             }
@@ -125,12 +145,15 @@ export default class Stats extends Component {
   // 新增
   async add() {
     this.setState({
-      showEdit: 'YYYY-MM-DD',
-      list: [...this.state.list, ['YYYY-MM-DD', '']]
+      showEdit: '',
+      list: [...this.state.list, ['', '']]
     }, () => {
       console.log(this.state.list.length * this.listItemHeight)
-      console.log(Dimensions.get('window').height)
-      this.listRef.scrollToEnd()
+      console.log(Dimensions.get('window').height * 0.75)
+      // 超过一页，滚动到最底部
+      if (this.state.list.length * this.listItemHeight > Dimensions.get('window').height * 0.75) {
+        this.listRef.scrollToEnd()
+      }
     })
   }
   // 编辑
@@ -139,8 +162,11 @@ export default class Stats extends Component {
       showEdit: key
     })
   }
-  // 提交编辑
-  async editSubmitHanlder(date, time) {
+  // 提交编辑/新增数据
+  submitHandler(date, time) {
+    if (!date || !time) {
+      return false
+    }
     // 覆盖该天数据（如果相同）、去掉编辑前数据 -> 新增数据 -> 排序
     const list = this.state.list
       .filter(item => item[0] !== this.state.showEdit && item[0] !== date)
@@ -149,24 +175,53 @@ export default class Stats extends Component {
       list: this.sort(list),
       showEdit: false
     })
+    return true
   }
   // 取消编辑
-  editCancelHandler() {
+  cancelHandler() {
     this.setState({
       showEdit: false,
-      list: this.state.list.filter(item => item[0] !== 'YYYY-MM-DD')
+      list: this.state.list.filter(item => item[0] !== '')
     })
+    // 超过一页，滚动到最顶部
+    // if (this.state.list.length * this.listItemHeight > Dimensions.get('window').height * 0.75) {
+    //   this.listRef.scrollToIndex({viewPosition: 0})
+    // }
   }
   // 删除
   async delete(key) {
-    this.setState({
-      list: this.state.list.filter(item => item[0] !== key)
-    })
+    Alert.alert(
+      "请确认",
+      `是否删除${key}的数据？`,
+      [
+        {
+          text: '确定',
+          onPress: () => {
+            this.setState({
+              list: this.state.list.filter(item => item[0] !== key)
+            })
+          }
+        },
+        { text: '取消' }
+      ]
+    )
   }
   // 清空
   clearAll() {
-    this.setState({
-      list: []
-    })
+    Alert.alert(
+      "请确认",
+      "是否清空所有数据？",
+      [
+        {
+          text: '确定',
+          onPress: () => {
+            this.setState({
+              list: []
+            })
+          }
+        },
+        { text: '取消' }
+      ]
+    )
   }
 }

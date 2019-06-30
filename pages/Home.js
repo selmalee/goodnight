@@ -27,11 +27,12 @@ export default class Home extends Component {
       <View style={styles.container}>
         {/* 晚安 */}
         <Text style={styles.time}>{this.state.time}</Text>
-        {this.state.overZero && <Text>熬夜会变丑哦。明天会没精神哦。</Text>}
+        {/* <Text style={styles.date}>{getDate(new Date())}</Text> */}
         <TouchableOpacity
           onPress={() => this.recordHandler()}>
           <Text style={styles.button}>晚安</Text>
         </TouchableOpacity>
+        {this.state.overZero && <Text style={styles.msg}>熬夜会变丑哦。明天会没精神哦。</Text>}
         {/* <TouchableOpacity
           onPress={() => this.test()}>
           <Text style={styles.button}>test</Text>
@@ -123,7 +124,8 @@ export default class Home extends Component {
   }
   // 打卡
   async record(date) {
-    await AsyncStorage.setItem(getDate(date), getTime(date))
+    // 缓存新打卡数据
+    await AsyncStorage.setItem('newRecord', getTime(date))
     Alert.alert("", "打卡成功！")
   }
 

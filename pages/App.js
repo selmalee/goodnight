@@ -3,8 +3,8 @@ import Stats from './Stats';
 import Home from './Home';
 import { Image } from 'react-native'
 import { TabNavigator, StackNavigator } from 'react-navigation'
-import iconStats from '../img/icon-stats.png'
-import iconHome from '../img/icon-home.png'
+import iconStats from '../img/stats.png'
+import iconHome from '../img/home.png'
 import styles from '../styles/app.style'
 
 // a route configuration object（一个路由配置对象）
@@ -18,8 +18,8 @@ const RootTabs = TabNavigator(
       screen: Home,
       navigationOptions: {
         tabBarLabel: '打卡',
-        tabBarIcon: () => (
-          <Image style={styles.tabBarIcon} source={iconHome} />
+        tabBarIcon: ({tintColor}) => (
+          <Image style={[styles.tabBarIcon, {tintColor: tintColor}]} source={iconHome} />
         )
       }
     },
@@ -27,8 +27,8 @@ const RootTabs = TabNavigator(
       screen: StatsStack,
       navigationOptions: {
         tabBarLabel: '数据',
-        tabBarIcon: () => (
-          <Image style={styles.tabBarIcon} source={iconStats} />
+        tabBarIcon: ({tintColor}) => (
+          <Image style={[styles.tabBarIcon, {tintColor: tintColor}]} source={iconStats} />
         ),
         tabBarOnPress: ({scene, jumpToIndex}) => {
           // console.log(scene)
@@ -43,9 +43,10 @@ const RootTabs = TabNavigator(
 	  lazy: true,
     initialRouteName: 'Home',
     tabBarOptions: {
-      activeTintColor: 'black',
-      inactiveTintColor: 'grey',
-      resetOnBlur: true
+      activeTintColor: '#2c2c2c',
+      inactiveTintColor: '#707070',
+      resetOnBlur: true,
+      tabBarColor: '#000'
     }
   }
 )
