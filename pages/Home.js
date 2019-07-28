@@ -125,7 +125,7 @@ export default class Home extends Component {
   // 打卡
   async record(date) {
     // 缓存新打卡数据
-    await AsyncStorage.setItem('newRecord', getTime(date))
+    await AsyncStorage.setItem(getDate(date), getTime(date))
     Alert.alert("", "打卡成功！")
   }
 

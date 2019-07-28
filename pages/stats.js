@@ -28,13 +28,7 @@ export default class Stats extends Component {
     this.listRef = undefined
     // 切换到数据页时，如果有新打卡数据，改变list后删除新打卡数据
     this.props.navigation.addListener('didFocus', async (payload) => {
-      console.log('didFocus')
-      const newRecord = await AsyncStorage.getItem('newRecord')
-      if (newRecord) {
-        console.log('newRecord', newRecord)
-        await this.submitHandler(getDate(new Date()), newRecord)
-        AsyncStorage.setItem('newRecord', '')
-      }
+      this.getData()
     })
   }
   // 组件mount时获取缓存数据

@@ -5,6 +5,7 @@ import {
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
+    // padding: 20,
     width: '100%',
     height: '100%',
     backgroundColor: '#fff'
@@ -54,7 +55,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection:'row',
     justifyContent: 'flex-end',
-    marginTop: 10
+    marginTop: 10,
+    // backgroundColor: '#f0f0f0'
   },
   footerButton: {
     marginRight: 10
