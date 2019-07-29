@@ -1,16 +1,31 @@
 import React, { Component } from 'react';
-import Stats from './Stats';
 import Home from './Home';
+import Stats from './Stats';
+import Week from './Week';
 import { Image } from 'react-native'
 import { TabNavigator, StackNavigator } from 'react-navigation'
 import iconStats from '../img/stats.png'
 import iconHome from '../img/home.png'
 import styles from '../styles/app.style'
 
+import store from '../store';
+import { Provider } from 'react-redux'
+
 // a route configuration object（一个路由配置对象）
 // an options object（一个可选对象）
 const StatsStack = StackNavigator({
-  Stats: { screen: Stats }
+  Stats: { 
+    screen: Stats,
+    navigationOptions: ({ navigation }) => ({
+      title: '历史数据',
+    })
+  },
+  Week: {
+    screen: Week,
+    navigationOptions: ({ navigation }) => ({
+      title: '本周',
+    })
+  },
 })
 const RootTabs = TabNavigator(
   {
@@ -30,11 +45,11 @@ const RootTabs = TabNavigator(
         tabBarIcon: ({tintColor}) => (
           <Image style={[styles.tabBarIcon, {tintColor: tintColor}]} source={iconStats} />
         ),
-        tabBarOnPress: ({scene, jumpToIndex}) => {
-          // console.log(scene)
-          jumpToIndex(scene.index)
-          // this.props.navigation.navigate('Stats')
-        }
+        // tabBarOnPress: ({scene, jumpToIndex}) => {
+        //   // console.log(scene)
+        //   jumpToIndex(scene.index)
+        //   // this.props.navigation.navigate('Stats')
+        // }
       }
     }
   },
@@ -58,7 +73,9 @@ export default class App extends Component {
 
   render() {
     return (
-      <RootTabs />
+      <Provider store={store}>
+        <RootTabs />
+      </Provider>
     )
   }
 }

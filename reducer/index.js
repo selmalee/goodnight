@@ -1,21 +1,19 @@
-import { delRecord, setRecord } from '../action';
+// Store 会把两个参数传入 reducer： 当前的 state 树和 action
+// 返回新的state
 
-export default (state, action) => {
+export default (state = { data: []}, action) => {
   const {key, value} = action;
 
   // 判断 action 类型
   switch (action.type) {
-    case 'setRecord':
+    case 'SETRECORD':
+      console.log(key, value)
       return {
-        ...state,
-        data: data
-          .filter(item => item.key !== key)
-          .push({ key, value })
+        data: state.data.filter(item => item.key !== key).concat([{key, value}])
       };
-    case 'delRecord':
+    case 'DELRECORD':
       return {
-        ...state,
-        data: data.filter(item => item.key !== key)
+        data: state.data.filter(item => item.key !== key)
       };
 
     default:

@@ -1,6 +1,6 @@
 export const setRecord = (key, value) => {
   return {
-    type: setRecord,
+    type: 'SETRECORD',
     key,
     value
   }
@@ -8,7 +8,7 @@ export const setRecord = (key, value) => {
 
 export const delRecord = (key) => {
   return {
-    type: delRecord,
+    type: 'DELRECORD',
     key
   }
 }

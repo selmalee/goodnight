@@ -8,6 +8,8 @@ import {
 } from 'react-native'
 import { getDate, getTime } from '../utils/index'
 import styles from '../styles/home.style'
+import store from '../store'
+import { setRecord } from '../action/';
 
 export default class Home extends Component {
   interval = null
@@ -124,6 +126,7 @@ export default class Home extends Component {
   }
   // 打卡
   async record(date) {
+    store.dispatch(setRecord(getDate(date), getTime(date)))
     // 缓存新打卡数据
     await AsyncStorage.setItem(getDate(date), getTime(date))
     Alert.alert("", "打卡成功！")
