@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Home from './Home';
 import Stats from './Stats';
-import Week from './Week';
+// import Week from './Week';
 import { Image } from 'react-native'
 import { TabNavigator, StackNavigator } from 'react-navigation'
 import iconStats from '../img/stats.png'
@@ -20,12 +20,12 @@ const StatsStack = StackNavigator({
       title: '历史数据',
     })
   },
-  Week: {
-    screen: Week,
-    navigationOptions: ({ navigation }) => ({
-      title: '本周',
-    })
-  },
+  // Week: {
+  //   screen: Week,
+  //   navigationOptions: ({ navigation }) => ({
+  //     title: '本周',
+  //   })
+  // },
 })
 const RootTabs = TabNavigator(
   {

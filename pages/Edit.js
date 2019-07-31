@@ -8,7 +8,7 @@ import styles from '../styles/stats.style'
 import DatePicker from 'react-native-datepicker'
 import { getDate } from '../utils/index'
 import iconClose from '../img/close.png'
-import iconCheck from '../img/check.png'
+// import iconCheck from '../img/check.png'
 
 const datePickerProps = {
   style: styles.listItemPicker,
@@ -55,18 +55,11 @@ export default class Edit extends Component {
           }}
         />
         <View style={styles.listItemActions}>
-          <TouchableOpacity onPress={() => this.submit()}>
-            <Image style={styles.listItemAction} source={iconCheck} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.props.cancel}>
+          <TouchableOpacity onPress={this.props.delHandler}>
             <Image style={styles.listItemAction} source={iconClose} />
           </TouchableOpacity>
         </View>
       </View>
     )
-  }
-  // 提交编辑
-  submit() {
-    this.props.submit(this.state.editDate, this.state.editTime)
   }
 }
