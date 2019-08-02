@@ -1,7 +1,4 @@
-## 编译并运行
-``` bash
-react-native run-ios
-```
+## 晚安打卡
 
 ## 报错记录
 #### Could not find iPhone 6 simulator
@@ -13,15 +10,6 @@ Replace ```version.indexOf('iOS') !== 0``` with ``` !version.includes('iOS') ```
 或者是index.ios.js与./ios/项目名/appDelegate.m或者./android/app/src/main/java/com/项目名/MainActivity.java中的项目名不一致
 
 #### no bundle url present
- 1. 
  ``` bash
- cd ios
- rm -rf build
- # 重新运行
+ yarn rebuild
  ```
- 2. 网络代理问题
-ios/GoodNight/AppDelegate.m
-``` c
-  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
-  jsCodeLocation = [NSURL URLWithString:@"http://127.0.0.1:8081/index.ios.bundle?platform=ios&dev=true"]; 
-```

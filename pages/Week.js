@@ -8,7 +8,7 @@ export default class Week extends Component {
 
   constructor(props) {
     super(props);
-    console.log(store.getState())
+    console.log(store.getState().list)
   }
 
   render() {

@@ -7,7 +7,7 @@ import {
 import styles from '../styles/stats.style'
 import DatePicker from 'react-native-datepicker'
 import { getDate } from '../utils/index'
-import iconClose from '../img/close.png'
+import iconDelete from '../img/close-circle.png'
 // import iconCheck from '../img/check.png'
 
 const datePickerProps = {
@@ -56,7 +56,7 @@ export default class Edit extends Component {
         />
         <View style={styles.listItemActions}>
           <TouchableOpacity onPress={this.props.delHandler}>
-            <Image style={styles.listItemAction} source={iconClose} />
+            <Image style={styles.listItemAction} source={iconDelete} />
           </TouchableOpacity>
         </View>
       </View>

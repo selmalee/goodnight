@@ -2,6 +2,9 @@ import {
   StyleSheet
 } from 'react-native';
 
+const BLUE = 'blue'
+const GREEN = 'green'
+
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
@@ -41,10 +44,10 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   colorInfo: {
-    color: 'blue',
+    color: BLUE,
   },
   colorSuccess: {
-    color: 'green',
+    color: GREEN,
   },
   new: {
     marginTop: 10,
@@ -56,10 +59,18 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent: 'flex-end',
     marginTop: 10,
-    // backgroundColor: '#f0f0f0'
+    backgroundColor: '#f9f9f9'
   },
+  // footerButtonWrap: {
+  //   width: '100%'
+  // },
   footerButton: {
     marginRight: 10
+  },
+  footerLeftButton: {
+    position: 'absolute',
+    left: 10,
+    top: 10
   },
   footerButtonText: {
     padding: 6,
@@ -68,7 +79,15 @@ const styles = StyleSheet.create({
     color: '#2c2c2c',
     borderWidth: 1,
     borderColor: '#2c2c2c'
-  }
+  },
+  footerButtonText_success: {
+    color: GREEN,
+    borderColor: GREEN
+  },
+  footerButtonText_info: {
+    color: BLUE,
+    borderColor: BLUE
+  },
 });
 
 export default styles

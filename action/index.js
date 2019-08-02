@@ -1,3 +1,24 @@
+import { AsyncStorage } from 'react-native'
+  
+export const initList = () => {
+  return async dispatch => {
+    const keys = await AsyncStorage.getAllKeys()
+    const list = await AsyncStorage.multiGet(keys)
+    dispatch({
+      type: 'INITLIST',
+      list
+    })
+    return list
+  }
+}
+
+export const setList = (list) => {
+  return {
+    type: 'SETLIST',
+    list
+  }
+}
+
 export const setRecord = (key, value) => {
   return {
     type: 'SETRECORD',
@@ -10,5 +31,12 @@ export const delRecord = (key) => {
   return {
     type: 'DELRECORD',
     key
+  }
+}
+
+export const addCount = (count) => {
+  return {
+    type: 'ADDCOUNT',
+    count
   }
 }

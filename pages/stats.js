@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   AppState,
   Image } from 'react-native'
-import Edit from './Edit'
+import Edit from '../components/Edit'
 import styles from '../styles/stats.style'
 // import { getDate } from '../utils/index'
 import Dimensions from 'Dimensions'
 import iconDelete from '../img/close-circle.png'
 import iconEdit from '../img/edit.png'
 import store from '../store';
-import { delRecord } from '../action/';
+import { delRecord, setList } from '../action/';
 
 export default class Stats extends Component {
   listItemHeight = 48
@@ -23,14 +23,18 @@ export default class Stats extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showEdit: false
+      showEdit: false,
+      editList: []
     }
     // 切换到数据页时，如果有新打卡数据，改变list后删除新打卡数据
-    // this.props.navigation.addListener('didFocus', async (payload) => {
-    //   this.getData()
-    //   console.log(store.getState().list)
-    //   console.log(this.state.list)
-    // })
+    this.props.navigation.addListener('didFocus', async (payload) => {
+      // this.getData()
+      console.log(store.getState())
+      this.setState({
+        editList: store.getState().list
+      })
+      // console.log(this.state.list)
+    })
   }
   // // 组件mount时获取缓存数据
   // componentDidMount() {
@@ -57,21 +61,33 @@ export default class Stats extends Component {
     return (
       <View style={styles.container}>
         {/* 滚动列表 */}
-        <FlatList
-          style={styles.list}
-          data={store.getState().list}
-          keyExtractor={(item) => item[0]}
-          getItemLayout={(data, index) => (
-            {length: this.listItemHeight, offset: this.listItemHeight * index, index}
-          )}
-          renderItem={({item}) => {
-            // if (this.state.showEdit) {
-            //   return (
-            //     <Edit
-            //       item={item}
-            //       delHandler={store.dispatch(delRecord(item[0]))} />
-            //   )
-            // } else {
+        {
+          this.state.showEdit ?
+          <FlatList
+            style={styles.list}
+            data={this.state.editList}
+            keyExtractor={(item) => item[0]}
+            getItemLayout={(data, index) => (
+              {length: this.listItemHeight, offset: this.listItemHeight * index, index}
+            )}
+            renderItem={({item}) => {
+              return (
+                <Edit
+                  item={item}
+                  delHandler={() => { this.setState({
+                    editList: this.state.editList.filter(li => li[0] !== item[0])
+                  }) } } />
+              )
+            }}
+          ></FlatList> :
+          <FlatList
+            style={styles.list}
+            data={store.getState().list}
+            keyExtractor={(item) => item[0]}
+            getItemLayout={(data, index) => (
+              {length: this.listItemHeight, offset: this.listItemHeight * index, index}
+            )}
+            renderItem={({item}) => {
               return (
                 <View style={styles.listItem} key={item[0]}>
                   {/* 列表项 */}
@@ -79,24 +95,24 @@ export default class Stats extends Component {
                   <Text style={styles.listItemText}>{item[1]}</Text>
                 </View>
               )
-            // }
-          }}
-        ></FlatList>
+            }}
+          ></FlatList>
+        }
         {/* 新增输入框 */}
         {/* 底部按钮 */}
         <View style={styles.footer}>
           {
             this.state.showEdit ?
-            <React.Fragment>
-              <TouchableOpacity style={styles.footerButton} onPress={this._submitEdit}>
-                <Text style={styles.footerButtonText}>确定</Text>
+            <View style={styles.footer}>
+              <TouchableOpacity style={styles.footerButton} onPress={() => this._submitEditHandler()}>
+                <Text style={[styles.footerButtonText, styles.footerButtonText_success]}>确定</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.footerButton} onPress={() => this.setState({ showEdit: false })}>
+              <TouchableOpacity style={styles.footerButton} onPress={() => this._cancelHandler()}>
                 <Text style={styles.footerButtonText}>取消</Text>
               </TouchableOpacity>
-            </React.Fragment> : 
-            <TouchableOpacity style={styles.footerButton} onPress={() => this.setState({ showEdit: true })}>
-              <Text style={styles.footerButtonText}>编辑</Text>
+            </View> : 
+            <TouchableOpacity style={styles.footerLeftButton} onPress={() => this.setState({ showEdit: true })}>
+              <Text style={[styles.footerButtonText, styles.footerButtonText_info]}>编辑</Text>
             </TouchableOpacity>
           }
         </View>
@@ -104,8 +120,18 @@ export default class Stats extends Component {
     );
   }
   // 提交编辑
-  _submitEdit() {
-
+  _submitEditHandler() {
+    store.dispatch(setList(this.state.editList))
+    this.setState({
+      showEdit: false
+    })
+  }
+  // 取消
+  _cancelHandler() {
+    this.setState({
+      showEdit: false,
+      editList: store.getState().list
+    })
   }
   // // 获取storage的数据
   // async getData() {
@@ -122,11 +148,6 @@ export default class Stats extends Component {
   //   // this.setState({
   //   //   list: store.getState().list
   //   // })
-  // }
-  // // 同步数据到storage
-  // async syncData() {
-  //   await AsyncStorage.clear()
-  //   AsyncStorage.multiSet(store.getState().list)
   // }
 
   // // 按日期排序

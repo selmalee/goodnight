@@ -10,6 +10,7 @@ import styles from '../styles/app.style'
 
 import store from '../store';
 import { Provider } from 'react-redux'
+import { initList } from '../action';
 
 // a route configuration object（一个路由配置对象）
 // an options object（一个可选对象）
@@ -69,6 +70,21 @@ const RootTabs = TabNavigator(
 export default class App extends Component {
   constructor(props) {
     super(props);
+  }
+  
+  componentDidMount() {
+    store.dispatch(initList()) // 初始化列表
+  }
+
+  componentWillUnmount() {
+    this.syncData()
+  }
+
+  // 同步数据到storage
+  async syncData() {
+    await AsyncStorage.clear()
+    console.log(store.getState().list)
+    AsyncStorage.multiSet(store.getState().list)
   }
 
   render() {
