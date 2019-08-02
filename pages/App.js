@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Home from './Home';
 import Stats from './Stats';
 // import Week from './Week';
-import { Image } from 'react-native'
+import { Image, AppState, AsyncStorage } from 'react-native'
 import { TabNavigator, StackNavigator } from 'react-navigation'
 import iconStats from '../img/stats.png'
 import iconHome from '../img/home.png'
@@ -71,21 +71,32 @@ export default class App extends Component {
   constructor(props) {
     super(props);
   }
-  
+
+  // 组件mount时获取缓存数据
   componentDidMount() {
+    console.log('mount')
     store.dispatch(initList()) // 初始化列表
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
-
+  // 组件unmount时同步数据到缓存
   componentWillUnmount() {
-    this.syncData()
+    console.log('unmount')
+    AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-  // 同步数据到storage
-  async syncData() {
-    await AsyncStorage.clear()
-    console.log(store.getState().list)
-    AsyncStorage.multiSet(store.getState().list)
+  // App切换到后台时同步数据到缓存
+  _handleAppStateChange = async (nextAppState) => {
+    if (nextAppState === 'inactive') {
+      console.log('inactive sync')
+      await AsyncStorage.clear()
+      AsyncStorage.multiSet(store.getState().list)
+    }
   }
+  // 同步数据到storage
+  // async syncData() {
+  //   await AsyncStorage.clear()
+  //   AsyncStorage.multiSet(store.getState().list)
+  // }
 
   render() {
     return (

@@ -37,7 +37,7 @@ export default (state = defaultState, action) => {
       const list = state.list.filter(item => item[0] !== key).concat([[key, value]])
       list.sort(sortFn)
       // console.log(list, state.list)
-      console.log(state)
+      // console.log(list)
       return {
         ...state,
         list

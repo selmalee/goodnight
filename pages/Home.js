@@ -28,7 +28,6 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         {/* 晚安 */}
-        <Text style={styles.time}>{store.getState().count}</Text>
         <Text style={styles.time}>{this.state.time}</Text>
         {/* <Text style={styles.date}>{getDate(new Date())}</Text> */}
         <TouchableOpacity
@@ -36,6 +35,7 @@ export default class Home extends Component {
           <Text style={styles.button}>晚安</Text>
         </TouchableOpacity>
         {this.state.overZero && <Text style={styles.msg}>熬夜会变丑哦。明天会没精神哦。</Text>}
+        <Text style={styles.msg}>{store.getState().count}</Text>
         {/* <TouchableOpacity
           onPress={() => this.test()}>
           <Text style={styles.button}>test</Text>
