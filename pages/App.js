@@ -74,13 +74,13 @@ export default class App extends Component {
 
   // 组件mount时获取缓存数据
   componentDidMount() {
-    console.log('mount')
+    // console.log('mount')
     store.dispatch(initList()) // 初始化列表
     AppState.addEventListener('change', this._handleAppStateChange);
   }
   // 组件unmount时同步数据到缓存
   componentWillUnmount() {
-    console.log('unmount')
+    // console.log('unmount')
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 

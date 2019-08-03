@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image } from 'react-native'
 import DatePicker from 'react-native-datepicker'
-import { setList } from '../action/'
+import { setList } from '../action'
 import iconDelete from '../img/close-circle.png'
 import store from '../store'
 import styles from '../styles/stats.style'
@@ -34,24 +34,34 @@ export default class Stats extends Component {
     super(props);
     this.state = {
       showEdit: false,
-      list: store.getState().list,
-      editList: store.getState().list
+      list: [],
+      editList: []
     }
+    // this.props.navigation.addListener('didFocus', async (payload) => {
+    //   console.log(store.getState().list)
+    // })
   }
   
   // flatList组件renderItem函数所依赖的props数据（包括data属性以及可能用到的父组件的state）改变（如果是引用数据类型则需要改变引用地址），才会重新渲染
   // 监听store变化并在unmount前解绑
   componentDidMount() {
+    console.log('mount')
+    this._setListData()
     this._unsubscribe = store.subscribe(() => {
-      this.setState({
-        list: store.getState().list,
-        editList: store.getState().list
-      })
+      this._setListData()
+      console.log('change state')
     })
   }
 
   componentWillUnmount() {
     this._unsubscribe()
+  }
+
+  _setListData() {
+    this.setState({
+      list: store.getState().list,
+      editList: store.getState().list
+    })
   }
 
   render() {
