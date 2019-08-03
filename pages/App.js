@@ -6,7 +6,7 @@ import { Image, AppState, AsyncStorage } from 'react-native'
 import { TabNavigator, StackNavigator } from 'react-navigation'
 import iconStats from '../img/stats.png'
 import iconHome from '../img/home.png'
-import styles from '../styles/app.style'
+import styles, { primaryColor, defaultColor } from '../styles/app.style'
 
 import store from '../store';
 import { Provider } from 'react-redux'
@@ -59,10 +59,10 @@ const RootTabs = TabNavigator(
 	  lazy: true,
     initialRouteName: 'Home',
     tabBarOptions: {
-      activeTintColor: '#2c2c2c',
-      inactiveTintColor: '#707070',
+      activeTintColor: primaryColor,
+      inactiveTintColor: defaultColor,
       resetOnBlur: true,
-      tabBarColor: '#000'
+      tabBarColor: primaryColor
     }
   }
 )
@@ -92,11 +92,6 @@ export default class App extends Component {
       AsyncStorage.multiSet(store.getState().list)
     }
   }
-  // 同步数据到storage
-  // async syncData() {
-  //   await AsyncStorage.clear()
-  //   AsyncStorage.multiSet(store.getState().list)
-  // }
 
   render() {
     return (

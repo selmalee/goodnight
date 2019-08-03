@@ -33,10 +33,3 @@ export const delRecord = (key) => {
     key
   }
 }
-
-export const addCount = (count) => {
-  return {
-    type: 'ADDCOUNT',
-    count
-  }
-}

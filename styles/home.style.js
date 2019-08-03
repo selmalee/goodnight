@@ -27,10 +27,7 @@ const styles = StyleSheet.create({
     marginTop: '30%',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    textAlign: 'center',
-    fontSize: 20,
-    color: '#fff',
-    backgroundColor: '#000'
+    fontSize: 20
   }
 });
 

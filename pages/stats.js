@@ -6,12 +6,13 @@ import {
   FlatList,
   TouchableOpacity,
   Image } from 'react-native'
-// import Edit from '../components/Edit'
-import styles from '../styles/stats.style'
-import iconDelete from '../img/close-circle.png'
 import DatePicker from 'react-native-datepicker'
-import store from '../store';
-import { setList } from '../action/';
+import { setList } from '../action/'
+import iconDelete from '../img/close-circle.png'
+import store from '../store'
+import styles from '../styles/stats.style'
+import appStyles from '../styles/app.style'
+import { sortListFn } from '../utils/index'
 
 const datePickerProps = {
   style: styles.listItemPicker,
@@ -27,27 +28,52 @@ const datePickerProps = {
 
 export default class Stats extends Component {
   listItemHeight = 48
+  _unsubscribe = undefined
 
   constructor(props) {
     super(props);
     this.state = {
       showEdit: false,
+      list: store.getState().list,
       editList: store.getState().list
     }
-    // 切换到数据页时，如果有新打卡数据，改变list后删除新打卡数据
-    this.props.navigation.addListener('didFocus', async (payload) => {
-      // this.getData()
-      console.log(store.getState().list)
-      // this.setState({
-      //   editList: store.getState().list
-      // })
-      // console.log(this.state.list)
+  }
+  
+  // flatList组件renderItem函数所依赖的props数据（包括data属性以及可能用到的父组件的state）改变（如果是引用数据类型则需要改变引用地址），才会重新渲染
+  // 监听store变化并在unmount前解绑
+  componentDidMount() {
+    this._unsubscribe = store.subscribe(() => {
+      this.setState({
+        list: store.getState().list,
+        editList: store.getState().list
+      })
     })
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe()
   }
 
   render() {
     return (
       <View style={styles.container}>
+        {/* 工具栏 */}
+        {
+          this.state.showEdit ?
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.footerButton} onPress={() => this._submitEditHandler()}>
+              <Text style={[appStyles.button_primary, styles.footerButtonText]}>确定</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.footerButton} onPress={() => this._cancelHandler()}>
+              <Text style={[appStyles.button, styles.footerButtonText]}>取消</Text>
+            </TouchableOpacity>
+          </View> : 
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.footerLeftButton} onPress={() => this.setState({ showEdit: true })}>
+              <Text style={[appStyles.button_primary, styles.footerButtonText]}>编辑</Text>
+            </TouchableOpacity>
+          </View>
+        }
         {/* 滚动列表 */}
         {
           this.state.showEdit ?
@@ -81,7 +107,7 @@ export default class Stats extends Component {
           ></FlatList> :
           <FlatList
             style={styles.list}
-            data={store.getState().list}
+            data={this.state.list}
             keyExtractor={(item) => item[0]}
             getItemLayout={(data, index) => (
               {length: this.listItemHeight, offset: this.listItemHeight * index, index}
@@ -91,30 +117,12 @@ export default class Stats extends Component {
                 <View style={styles.listItem} key={item[0]}>
                   {/* 列表项 */}
                   <Text style={styles.listItemText}>{item[0]}</Text>
-                  <Text style={styles.listItemText}>{item[1]}</Text>
+                  <Text style={[styles.listItemText, styles.listItemTextTime]}>{item[1]}</Text>
                 </View>
               )
             }}
           ></FlatList>
         }
-        {/* 新增输入框 */}
-        {/* 底部按钮 */}
-        <View style={styles.footer}>
-          {
-            this.state.showEdit ?
-            <View style={styles.footer}>
-              <TouchableOpacity style={styles.footerButton} onPress={() => this._submitEditHandler()}>
-                <Text style={[styles.footerButtonText, styles.footerButtonText_success]}>确定</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.footerButton} onPress={() => this._cancelHandler()}>
-                <Text style={styles.footerButtonText}>取消</Text>
-              </TouchableOpacity>
-            </View> : 
-            <TouchableOpacity style={styles.footerLeftButton} onPress={() => this.setState({ showEdit: true })}>
-              <Text style={[styles.footerButtonText, styles.footerButtonText_info]}>编辑</Text>
-            </TouchableOpacity>
-          }
-        </View>
       </View>
     );
   }
@@ -149,9 +157,10 @@ export default class Stats extends Component {
   }
   // 编辑-编辑时间
   _editHandler (key, value) {
-    console.log(this.state.editList.filter(item => item[0] !== key).concat([[key, value]]))
+    let editList = this.state.editList.filter(item => item[0] !== key).concat([[key, value]])
+    editList.sort(sortListFn)
     this.setState({
-      editList: this.state.editList.filter(item => item[0] !== key).concat([[key, value]])
+      editList
     })
   }
   // 编辑-删除记录

@@ -1,15 +1,10 @@
 ## 晚安打卡
 
+![打卡](https://seminelee.github.io/static/2019/08/ios-1.png)
+![历史数据](https://seminelee.github.io/static/2019/08/ios-2.png)
+![编辑数据](https://seminelee.github.io/static/2019/08/ios-3.png)
+
 ## 报错记录
 #### Could not find iPhone 6 simulator
 node_modules/react-native/local-cli/runIOS/findMatchingSimulator.js line30
 Replace ```version.indexOf('iOS') !== 0``` with ``` !version.includes('iOS') ```
-
-#### GoodNight has not been registered
-进程冲突，关闭模拟器后重新运行
-或者是index.ios.js与./ios/项目名/appDelegate.m或者./android/app/src/main/java/com/项目名/MainActivity.java中的项目名不一致
-
-#### no bundle url present
- ``` bash
- yarn rebuild
- ```

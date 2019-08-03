@@ -2,14 +2,14 @@ import React, { Component } from 'react'
 import { 
   View,
   Text,
-  AsyncStorage,
   TouchableOpacity,
   Alert
 } from 'react-native'
-import { getDate, getTime } from '../utils/index'
-import styles from '../styles/home.style'
+import { setRecord } from '../action/'
 import store from '../store'
-import { setRecord, addCount } from '../action/';
+import appStyles from '../styles/app.style'
+import styles from '../styles/home.style'
+import { getDate, getTime } from '../utils/index'
 
 export default class Home extends Component {
   interval = null
@@ -29,13 +29,11 @@ export default class Home extends Component {
       <View style={styles.container}>
         {/* 晚安 */}
         <Text style={styles.time}>{this.state.time}</Text>
-        {/* <Text style={styles.date}>{getDate(new Date())}</Text> */}
         <TouchableOpacity
           onPress={() => this.recordHandler()}>
-          <Text style={styles.button}>晚安</Text>
+          <Text style={[appStyles.button_primary, styles.button]}>晚安</Text>
         </TouchableOpacity>
         {this.state.overZero && <Text style={styles.msg}>熬夜会变丑哦。明天会没精神哦。</Text>}
-        <Text style={styles.msg}>{store.getState().count}</Text>
         {/* <TouchableOpacity
           onPress={() => this.test()}>
           <Text style={styles.button}>test</Text>
@@ -127,10 +125,7 @@ export default class Home extends Component {
   }
   // 打卡
   async record(date) {
-    store.dispatch(addCount(1))
     store.dispatch(setRecord(getDate(date), getTime(date)))
-    // 缓存新打卡数据
-    await AsyncStorage.setItem(getDate(date), getTime(date))
     Alert.alert("", "打卡成功！")
   }
 

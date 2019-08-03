@@ -2,31 +2,36 @@ import {
   StyleSheet
 } from 'react-native';
 
-const BLUE = 'blue'
-const GREEN = 'green'
+import { defaultColor, primaryColor } from './app.style'
 
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    // padding: 20,
     width: '100%',
     height: '100%',
     backgroundColor: '#fff'
   },
+  // --- list ---
   list: {
-    height: '75%',
+    flex: 1,
     paddingBottom: 10
   },
   listItem: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
     height: 18,
     margin: 10
   },
   listItemText: {
-    fontSize: 18,
+    flex: 1,
+    fontSize: 16,
+    color: defaultColor
+  },
+  listItemTextTime: {
+    textAlign: 'center',
+    color: primaryColor
   },
   listItemActions: {
     flexDirection: 'row',
@@ -40,54 +45,28 @@ const styles = StyleSheet.create({
   listItemPicker: {
     margin: 0
   },
-  colorError: {
-    color: 'red',
-  },
-  colorInfo: {
-    color: BLUE,
-  },
-  colorSuccess: {
-    color: GREEN,
-  },
-  new: {
-    marginTop: 10,
-    flex: 1,
-    height: 50
-  },
+  // --- footer ----
   footer: {
-    flex: 1,
+    display: 'flex',
     flexDirection:'row',
     justifyContent: 'flex-end',
-    marginTop: 10,
-    backgroundColor: '#f9f9f9'
+    margin: 10,
+    height: 40,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f7f7f7'
   },
-  // footerButtonWrap: {
-  //   width: '100%'
-  // },
   footerButton: {
+    margin: 0,
     marginRight: 10
   },
   footerLeftButton: {
     position: 'absolute',
-    left: 10,
-    top: 10
+    left: 0,
+    top: 0
   },
   footerButtonText: {
-    padding: 6,
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#2c2c2c',
-    borderWidth: 1,
-    borderColor: '#2c2c2c'
-  },
-  footerButtonText_success: {
-    color: GREEN,
-    borderColor: GREEN
-  },
-  footerButtonText_info: {
-    color: BLUE,
-    borderColor: BLUE
-  },
-});
+    padding: 6
+  }
+})
 
 export default styles
