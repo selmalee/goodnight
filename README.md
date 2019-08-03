@@ -1,4 +1,4 @@
-## 晚安打卡App
+## 晚安打卡
 ![打卡](https://seminelee.github.io/static/2019/08/ios-1.png)
 ![历史数据](https://seminelee.github.io/static/2019/08/ios-2.png)
 ![编辑数据](https://seminelee.github.io/static/2019/08/ios-3.png)
