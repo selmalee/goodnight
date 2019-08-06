@@ -23,7 +23,9 @@ export default (state = defaultState, action) => {
         list: [...action.list]
       }
     case 'SETRECORD':
-      const list = [...state.list.filter(item => item[0] !== key).concat([[key, value]])]
+      let list = state.list
+        .filter(item => item[0] !== key)
+        .concat([[key, value]])
       list.sort(sortListFn)
       return {
         list
