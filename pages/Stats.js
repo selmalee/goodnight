@@ -125,7 +125,7 @@ export default class Stats extends Component {
           ></FlatList> :
           <FlatList
             style={styles.list}
-            data={this.state.list}
+            data={store.getState().list}
             keyExtractor={(item) => item[0]}
             getItemLayout={(data, index) => (
               {length: this.listItemHeight, offset: this.listItemHeight * index, index}
