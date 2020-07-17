@@ -10,7 +10,7 @@
     "release": "react-native bundle --entry-file index.ios.js --platform ios --dev false --bundle-output release_ios/main.jsbundle --assets-dest release_ios/"
 	},
 	"dependencies": {
-		"lodash": "4.17.13",
+		"lodash": "4.17.19",
 		"react": "16.0.0-alpha.6",
 		"react-native": "0.44.3",
 		"react-native-datepicker": "^1.7.2",
